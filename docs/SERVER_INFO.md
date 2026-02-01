@@ -4,35 +4,30 @@
 
 ## SSH доступ
 
-- **IP:** 193.242.109.75
+- **IP:** 2.58.98.163
 - **Порт SSH:** 22
 - **Пользователь:** root
-- **Пароль:** ZEoff%RWj5kJ
+- **Пароль:** FRtksndktk!4
 
-## Прокси (НАСТРОЕНО ✅)
+## WireGuard VPN ✅ НАСТРОЕНО
 
-- **IP:** 193.242.109.75
-- **Порт SOCKS5:** 18388
-- **Пользователь прокси:** smartproxy
-- **Пароль прокси:** RxRKmHnl80vCW7GB
+- **IP:** 2.58.98.163
+- **Порт:** 51820/udp
+- **Конфигурация клиента:** client/vpn-config.conf
 
 ## Подключение SSH
 
 ```bash
-ssh root@193.242.109.75
-# Пароль: ZEoff%RWj5kJ
+ssh root@2.58.98.163
+# Пароль: FRtksndktk!4
 ```
 
-## Проверка прокси
+## VPN ключи
 
-```bash
-curl --socks5-hostname smartproxy:RxRKmHnl80vCW7GB@193.242.109.75:18388 https://api.ipify.org
-# Должен вернуть: 193.242.109.75
-```
+### Сервер
+- Private: SGxF/KrAaMYH1mjmCtZldXTK1qt985f05NJalMojS1U=
+- Public: GREllj0aZDLmFpcziI4hQ8o7qByPpLWgaGcWJdGnZGs=
 
-## Восстановление SSH (если заблокирован)
-
-Если SSH недоступен, через VNC/консоль хостера выполните:
-```bash
-ufw allow 22/tcp
-```
+### Клиент (Windows)
+- Private: +Ew2/iKoX8ndSbhMcLlXbAcL7mw3ccaW4n0tcRgMNks=
+- Public: 6qw4W+JiIzd/WylfXuJ/IDRVjmDrv66z6GoqF9RiAQI=
