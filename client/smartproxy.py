@@ -135,6 +135,35 @@ class WindowsProxyManager:
             logger.error(f"Ошибка установки прокси: {e}")
             return False
     
+    def set_manual_proxy(self, proxy_address: str):
+        """Установить ручной прокси-сервер"""
+        try:
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, self.INTERNET_SETTINGS, 0, winreg.KEY_WRITE)
+            
+            # Включаем ручной прокси
+            winreg.SetValueEx(key, 'ProxyEnable', 0, winreg.REG_DWORD, 1)
+            winreg.SetValueEx(key, 'ProxyServer', 0, winreg.REG_SZ, proxy_address)
+            
+            # Убираем PAC URL
+            try:
+                winreg.DeleteValue(key, 'AutoConfigURL')
+            except FileNotFoundError:
+                pass
+            
+            # Исключения для локальных адресов
+            winreg.SetValueEx(key, 'ProxyOverride', 0, winreg.REG_SZ, 'localhost;127.*;10.*;192.168.*;<local>')
+            
+            winreg.CloseKey(key)
+            
+            # Уведомляем систему об изменениях
+            self._refresh_settings()
+            
+            logger.info(f"Прокси настроен: {proxy_address}")
+            return True
+        except Exception as e:
+            logger.error(f"Ошибка установки прокси: {e}")
+            return False
+    
     def restore_original_settings(self):
         """Восстановить оригинальные настройки прокси"""
         try:
@@ -631,24 +660,14 @@ class SmartProxyApp:
         
         self.running = True
         
-        # Создаём PAC-файл
-        pac_port = self.config.local_port + 1  # PAC на следующем порту
+        # Адрес локального прокси
         proxy_address = f"{self.config.local_host}:{self.config.local_port}"
-        
-        pac_generator = PACGenerator(self.config.domains, proxy_address)
-        pac_content = pac_generator.generate()
-        
-        # Запускаем PAC-сервер
-        self.pac_server = PACServer(self.config.local_host, pac_port, pac_content)
-        self.pac_server.start()
-        
-        pac_url = f"http://{self.config.local_host}:{pac_port}/proxy.pac"
         
         # Настраиваем системный прокси (только для Windows)
         if sys.platform == 'win32':
             self.proxy_manager = WindowsProxyManager()
             self.proxy_manager.save_original_settings()
-            self.proxy_manager.set_pac_proxy(pac_url)
+            self.proxy_manager.set_manual_proxy(proxy_address)
             
             # Регистрируем очистку при выходе
             atexit.register(self.cleanup)
@@ -661,17 +680,16 @@ class SmartProxyApp:
         print("  SmartProxy запущен и работает!")
         print("=" * 55)
         print()
-        print(f"  Локальный прокси:  {self.config.local_host}:{self.config.local_port}")
-        print(f"  PAC-файл:          {pac_url}")
+        print(f"  Локальный прокси:  {proxy_address}")
         print(f"  Удалённый сервер:  {self.config.proxy_host}:{self.config.proxy_port}")
         print(f"  Доменов:           {len(self.config.domains)}")
         print()
         if sys.platform == 'win32':
-            print("  ✓ Системный прокси настроен автоматически")
-            print("  ✓ Браузеры будут использовать SmartProxy")
+            print("  Системный прокси настроен автоматически")
+            print("  Браузеры будут использовать SmartProxy")
         print()
-        print("  Проксируемые сайты будут открываться через Латвию")
-        print("  Остальные сайты — напрямую")
+        print("  Проксируемые сайты -> через Латвию")
+        print("  Остальные сайты -> напрямую")
         print()
         print("  Нажмите Ctrl+C для выхода")
         print("=" * 55)
@@ -703,9 +721,6 @@ class SmartProxyApp:
         
         if self.proxy_server:
             self.proxy_server.stop()
-        
-        if self.pac_server:
-            self.pac_server.stop()
         
         if self.proxy_manager:
             self.proxy_manager.restore_original_settings()
