@@ -1,0 +1,65 @@
+# SmartProxy Configuration
+# Конфигурация умного прокси для обхода блокировок
+
+# Настройки удалённого прокси (сервер в Латвии)
+proxy:
+  host: "193.242.109.75"
+  port: 18388
+  username: "smartproxy"
+  password: "RxRKmHnl80vCW7GB"
+  type: "socks5"
+
+# Локальный прокси (на вашем компьютере)
+local:
+  host: "127.0.0.1"
+  port: 8080
+
+# Домены которые будут проксироваться через удалённый сервер
+# Поддерживает wildcards: *.example.com
+domains:
+  # Google AI
+  - "gemini.google.com"
+  - "*.gemini.google.com"
+  - "notebooklm.google.com"
+  - "*.notebooklm.google.com"
+  - "aistudio.google.com"
+  - "*.aistudio.google.com"
+  - "generativelanguage.googleapis.com"
+  
+  # OpenAI / ChatGPT
+  - "openai.com"
+  - "*.openai.com"
+  - "chat.openai.com"
+  - "api.openai.com"
+  - "cdn.openai.com"
+  - "chatgpt.com"
+  - "*.chatgpt.com"
+  
+  # YouTube
+  - "youtube.com"
+  - "*.youtube.com"
+  - "youtu.be"
+  - "*.youtu.be"
+  - "googlevideo.com"
+  - "*.googlevideo.com"
+  - "ytimg.com"
+  - "*.ytimg.com"
+  - "ggpht.com"
+  - "*.ggpht.com"
+  
+  # Instagram
+  - "instagram.com"
+  - "*.instagram.com"
+  - "cdninstagram.com"
+  - "*.cdninstagram.com"
+  - "fbcdn.net"
+  - "*.fbcdn.net"
+  
+  # Higgsfield
+  - "higgsfield.ai"
+  - "*.higgsfield.ai"
+
+# Логирование
+logging:
+  enabled: true
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR

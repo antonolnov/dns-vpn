@@ -1,0 +1,7 @@
+# SmartProxy Dependencies
+PyYAML>=6.0
+pyinstaller>=6.0
+
+# Опционально - для версии с системным треем
+pystray>=0.19.0
+pillow>=10.0.0
